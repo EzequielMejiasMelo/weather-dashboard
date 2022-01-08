@@ -26,7 +26,6 @@ function initialRender(city) {
         
         historyDiv.append(buttonNode);
         renderedCities.push(city);
-        findCityCoord(city);
     }
 }
 
@@ -68,7 +67,7 @@ function renderCurrentWeather(city, latitude, longitude){
         method: "GET"
     }).then(function (response) {
         var currTemp = response.current.temp;
-        var currWind = response.current.wind;
+        var currWind = response.current.wind_speed;
         var currHumid = response.current.humidity;
         var currentUv = response.current.uvi;
         var currentIcon = `https://openweathermap.org/img/w/${response.current.weather[0].icon}.png`;
@@ -76,7 +75,7 @@ function renderCurrentWeather(city, latitude, longitude){
         $(".todayDate").text(city + " (" + moment().format("M/D/YYYY") + ") ");
         $(".todayIcon").attr("src", currentIcon).attr("alt", response.current.weather[0].description);
         $(".todayTemp").text(currTemp);
-        $(".todayWind").text(currWind);
+        $(".todayWind").text(currWind + " MPH");
         $(".todayHumid").text(currHumid);
         $(".todayUV").text(currentUv);
     })
@@ -94,4 +93,4 @@ function saveHistory(){
 }
 
 //Event Listeners
-historyDiv.on("click", renderCityBtn);
+$(".search").on("click", renderCityBtn);
