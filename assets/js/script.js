@@ -9,7 +9,7 @@ var historyDiv = $(".searchHistory");
 
 function pullHistory(){
     var temp = JSON.parse(localStorage.getItem("history"));
-    temp !== null ? searchHistory = temp : null
+    temp !== null ? searchHistory = temp : null;
 
     for(var i=0; i<searchHistory.length; i++){
         renderCityBtn(searchHistory[i]);
@@ -29,14 +29,23 @@ function renderCityBtn(city){
 }
 
 function findCityCoord(city){
+    $.ajax({
+        url: geocodeApiUrl + "q=" + city + "&limit=3&appid=" + weatherApiKey,
+        method: "GET"
+    }).then(function (response) {
+        console.log("GET request from Geocode API \n-----------")
+        console.log(response);
+        renderCurrentWeather(response);
+        renderForecastWeather(response);
+    });
     return;
 }
 
-function renderCurrentWeather(){
+function renderCurrentWeather(data){
     return;
 }
 
-function renderForecastWeather(){
+function renderForecastWeather(data){
     return;
 }
 
