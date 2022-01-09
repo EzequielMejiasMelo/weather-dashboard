@@ -40,6 +40,8 @@ function renderCityBtn(event){
                     .text(requestedCity);
                 
                 historyDiv.append(buttonNode);
+                searchHistory.push(requestedCity);
+                saveHistory();
                 renderedCities.push(requestedCity);
             }
             findCityCoord(requestedCity);
