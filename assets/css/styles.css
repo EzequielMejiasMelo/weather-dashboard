@@ -1,0 +1,9 @@
+.todayIcon {
+    height: 90px;
+    width: 90px;
+    padding: 0;
+}
+
+.hide {
+    visibility: hidden;
+}

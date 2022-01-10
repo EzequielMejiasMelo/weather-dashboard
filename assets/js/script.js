@@ -83,7 +83,7 @@ function renderCurrentWeather(city, data){
     var currentIcon = `https://openweathermap.org/img/w/${data.current.weather[0].icon}.png`;
 
     $(".todayDate").text(`${city} (${moment().format("M/D/YYYY")})`);
-    $(".todayIcon").attr("src", currentIcon).attr("alt", data.current.weather[0].description);
+    $(".todayIcon").removeClass("hide").attr("src", currentIcon).attr("alt", data.current.weather[0].description);
     $(".todayTemp").text(`${currTemp} °F`);
     $(".todayWind").text(`${currWind} MPH`);
     $(".todayHumid").text(`${currHumid} %`);
@@ -107,7 +107,7 @@ function renderForecastWeather(city, data){
         var tempTag = $("<p>").addClass("fs-5").text(`Temp: ${forecastTemp} °F`);
         var windTag = $("<p>").addClass("fs-5").text(`Temp: ${forecastWind} MPH`);
         var humidTag = $("<p>").addClass("fs-5").text(`Temp: ${forecastHumid} %`);
-        var iconTag = $("<img>").addClass("mx-auto float-start").attr("src", forecastIcon);
+        var iconTag = $("<img>").addClass("float-start").attr("height", "50px").attr("width", "50px").attr("src", forecastIcon);
 
         cardNode.append(dateTag);
         cardNode.append(iconTag);
