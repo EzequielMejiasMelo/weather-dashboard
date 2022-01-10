@@ -9,8 +9,8 @@ var weatherApiKey = "dbfb252a5086fde6ee52e8be5d2fce7f";
 var historyDiv = $(".searchHistory");
 
 function pullHistory(){
-    var temp = JSON.parse(localStorage.getItem("history"));
-    temp !== null ? searchHistory = temp : null;
+    var pulledSearchHistory = JSON.parse(localStorage.getItem("history"));
+    pulledSearchHistory !== null ? searchHistory = pulledSearchHistory : null;
 
     for(var i=0; i<searchHistory.length; i++){
         initialRender(searchHistory[i]);
@@ -31,8 +31,8 @@ function initialRender(city) {
 
 function renderCityBtn(event){
     if (event.target.dataset.index === "Submit") {
-        var requestedCity = $(".form-control").val();
-        if (requestedCity !== null || requestedCity !== ""){
+        var requestedCity = $(".form-control").val().toLowerCase();
+        if (requestedCity !== null && requestedCity !== "" && typeof requestedCity === "string"){
             if (!renderedCities.includes(requestedCity)){
                 var buttonNode = $("<button>")
                     .addClass("btn btn-secondary w-100 m-2 fs-5")
@@ -56,9 +56,10 @@ function findCityCoord(city){
         method: "GET"
     }).then(function (response) {
         //save city coordinates and pass to weather API
+        var cityName = response[0].name;
         var latitude = response[0].lat;
         var longitude = response[0].lon;
-        pullWeatherData(city, longitude, latitude);
+        pullWeatherData(cityName, longitude, latitude);
     });
     return;
 }
@@ -92,7 +93,7 @@ function renderCurrentWeather(city, data){
     return;
 }
 
-function renderForecastWeather(city, data){
+function renderForecastWeather(_city, data){
     document.querySelector(".card-list").innerHTML = "";
 
     for (var i=0; i<5; i++){
