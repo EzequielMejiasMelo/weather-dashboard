@@ -29,38 +29,50 @@ function initialRender(city) {
     }
 }
 
-function renderCityBtn(event){
-    if (event.target.dataset.index === "Submit") {
-        var requestedCity = $(".form-control").val().toLowerCase();
-        if (requestedCity !== null && requestedCity !== "" && typeof requestedCity === "string"){
-            if (!renderedCities.includes(requestedCity)){
-                var buttonNode = $("<button>")
-                    .addClass("btn btn-secondary w-100 m-2 fs-5")
-                    .attr("data-index", requestedCity)
-                    .text(requestedCity);
-                
-                historyDiv.append(buttonNode);
-                searchHistory.push(requestedCity);
-                saveHistory();
-                renderedCities.push(requestedCity);
-            }
-            findCityCoord(requestedCity);
-        }
+function renderCityBtn(city){
+    if (!renderedCities.includes(city)){
+        var buttonNode = $("<button>")
+            .addClass("btn btn-secondary w-100 m-2 fs-5")
+            .attr("data-index", city)
+            .text(city);
+        
+        historyDiv.append(buttonNode);
+        searchHistory.push(city);
+        renderedCities.push(city);
+        saveHistory();
     }
     return;
 }
 
-function findCityCoord(city){
-    $.ajax({
-        url: `${geocodeApiUrl}q=${city}&limit=3&appid=${weatherApiKey}`,
-        method: "GET"
-    }).then(function (response) {
-        //save city coordinates and pass to weather API
-        var cityName = response[0].name;
-        var latitude = response[0].lat;
-        var longitude = response[0].lon;
-        pullWeatherData(cityName, longitude, latitude);
-    });
+function findCityCoord(event){
+    
+    if (event.target.nodeName === "BUTTON"){
+        if(event.target.dataset.index === "Submit"){
+            var requestedCity = $(".form-control").val().toLowerCase();
+        } else {
+            var requestedCity = event.target.dataset.index;
+        }
+
+        if (requestedCity !== null && requestedCity !== "") {
+            $.ajax({
+                url: `${geocodeApiUrl}q=${requestedCity}&limit=3&appid=${weatherApiKey}`,
+                method: "GET"
+            }).then(function (response) {
+                if (!response[0]) {
+                    alert("Please enter a valid city");
+                } else {
+                    //save city coordinates and pass to weather API
+                    var cityName = response[0].name;
+                    var latitude = response[0].lat;
+                    var longitude = response[0].lon;
+                    renderCityBtn(cityName);
+                    pullWeatherData(cityName, longitude, latitude);
+                }
+            }).catch(function (error){
+                console.log(error);
+            });
+        }
+    }
     return;
 }
 
@@ -129,4 +141,5 @@ function saveHistory(){
 }
 
 //Event Listeners
-$(".search").on("click", renderCityBtn);
+$(".search").on("click", findCityCoord);
+$(".searchHistory").on("click", findCityCoord);
