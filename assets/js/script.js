@@ -8,28 +8,19 @@ var weatherApiKey = "dbfb252a5086fde6ee52e8be5d2fce7f";
 //DOM elements
 var historyDiv = $(".searchHistory");
 
+// pulls saved history from localstorage
 function pullHistory(){
     var pulledSearchHistory = JSON.parse(localStorage.getItem("history"));
     pulledSearchHistory !== null ? searchHistory = pulledSearchHistory : null;
 
     for(var i=0; i<searchHistory.length; i++){
-        initialRender(searchHistory[i]);
+        renderCityBtn(searchHistory[i]);
     }
 }
 
-function initialRender(city) {
-    if (!renderedCities.includes(city)){
-        var buttonNode = $("<button>")
-            .addClass("btn btn-secondary w-100 m-2 fs-5")
-            .attr("data-index", city)
-            .text(city);
-        
-        historyDiv.append(buttonNode);
-        renderedCities.push(city);
-    }
-}
-
+// renders city button to page
 function renderCityBtn(city){
+    // checks if we have already rendered the city as a button
     if (!renderedCities.includes(city)){
         var buttonNode = $("<button>")
             .addClass("btn btn-secondary w-100 m-2 fs-5")
@@ -37,18 +28,23 @@ function renderCityBtn(city){
             .text(city);
         
         historyDiv.append(buttonNode);
-        searchHistory.push(city);
+        //check to see if city already in our searchHistory array so we don't duplicate
+        !searchHistory.includes(city)? searchHistory.push(city) : null;
         renderedCities.push(city);
         saveHistory();
+
     }
     return;
 }
 
+//checks if city is valid, finds latitude and longitude | calls renderCityBtn and pullWeatherData
 function findCityCoord(event){
-    
+    // checks for button click
     if (event.target.nodeName === "BUTTON"){
+        // in case where we type and click submit we want to find the city we wrote in textarea tag
         if(event.target.dataset.index === "Submit"){
             var requestedCity = $(".form-control").val().toLowerCase();
+        //in case where we want to click a button we already have in search history
         } else {
             var requestedCity = event.target.dataset.index;
         }
@@ -76,6 +72,7 @@ function findCityCoord(event){
     return;
 }
 
+//API call to find weather data
 function pullWeatherData(city, longitude, latitude){
     $.ajax({
         url: `${weatherApiUrl}lat=${latitude}&lon=${longitude}&units=imperial&appid=${weatherApiKey}`,
@@ -83,9 +80,12 @@ function pullWeatherData(city, longitude, latitude){
     }).then(response => {
         renderCurrentWeather(city, response);
         renderForecastWeather(city, response);
+    }).catch(function (error) {
+        console.log(error);
     })
 }
 
+//renders the current weather data to the page with obj from pullWeatherData
 function renderCurrentWeather(city, data){
     // current weather data
     console.log(data);
@@ -105,6 +105,7 @@ function renderCurrentWeather(city, data){
     return;
 }
 
+//renders the forecast cards to page with obj from pullWeatherData
 function renderForecastWeather(_city, data){
     document.querySelector(".card-list").innerHTML = "";
 
@@ -135,6 +136,7 @@ function renderForecastWeather(_city, data){
     return;
 }
 
+//saves searchHistory array to localstorage
 function saveHistory(){
     localStorage.setItem("history", JSON.stringify(searchHistory));
     return;
@@ -143,3 +145,4 @@ function saveHistory(){
 //Event Listeners
 $(".search").on("click", findCityCoord);
 $(".searchHistory").on("click", findCityCoord);
+$(document).ready(pullHistory);
