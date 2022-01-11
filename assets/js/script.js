@@ -16,6 +16,7 @@ function pullHistory(){
     for(var i=0; i<searchHistory.length; i++){
         renderCityBtn(searchHistory[i]);
     }
+    return;
 }
 
 // renders city button to page
@@ -83,6 +84,7 @@ function pullWeatherData(city, longitude, latitude){
     }).catch(function (error) {
         console.log(error);
     })
+    return;
 }
 
 //renders the current weather data to the page with obj from pullWeatherData
